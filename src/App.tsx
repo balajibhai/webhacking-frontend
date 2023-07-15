@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import TextField from "./components/TextField";
 
+const xml2js = require("xml2js");
+const parserOptions = {
+  entities: true,
+};
+const parser = new xml2js.Parser(parserOptions);
+
 function App() {
   const express = "http://localhost:5000";
   const commandInj = "http://localhost:3001";
@@ -109,6 +115,31 @@ function App() {
     ));
   }
 
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileChange = (event: any) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleFileUpload = () => {
+    if (selectedFile) {
+      const fileReader = new FileReader();
+      fileReader.onload = (event: any) => {
+        const xmlData = event.target.result;
+
+        parser.parseString(xmlData, (error: any, result: any) => {
+          if (error) {
+            console.error("Error parsing XML:", error);
+          } else {
+            console.log("Parsed XML:", result);
+          }
+        });
+      };
+
+      fileReader.readAsText(selectedFile);
+    }
+  };
+
   return (
     <div className="App">
       <div>
@@ -128,6 +159,14 @@ function App() {
         placeholder="Enter your phone number"
       />
       <button onClick={handleSubmit}>Submit</button>
+      <div>
+        <input type="file" onChange={handleFileChange} />
+        <button onClick={handleFileUpload}>Upload</button>
+      </div>
+      <img
+        src="https://fujifilm-x.com/wp-content/uploads/2021/01/gfx100s_sample_04_thum-1.jpg"
+        alt="Image"
+      />
     </div>
   );
 }
