@@ -44,6 +44,33 @@ function App() {
     genericDbData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/my-route", {
+          method: "GET",
+          body: JSON.stringify({
+            key: "value",
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const responseData = await response.json();
+          console.log(responseData);
+        } else {
+          throw new Error("Request failed");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const handleSubscribe = () => {
     fetch(`${express}/tshirt/2`, {
       method: "POST",
@@ -140,6 +167,16 @@ function App() {
     }
   };
 
+  const handleImageClick = () => {
+    const newParams = new URLSearchParams();
+    newParams.append("name", "laptop");
+    newParams.append("foldername", "images");
+    newParams.append("filename", "mypic.jpg");
+    const updatedURL = `${window.location.pathname}?${newParams.toString()}`;
+    window.location.href = `http://localhost:3000/${newParams}`;
+    console.log("updatedURL: ", updatedURL);
+  };
+
   return (
     <div className="App">
       <div>
@@ -163,10 +200,16 @@ function App() {
         <input type="file" onChange={handleFileChange} />
         <button onClick={handleFileUpload}>Upload</button>
       </div>
-      <img
-        src="https://fujifilm-x.com/wp-content/uploads/2021/01/gfx100s_sample_04_thum-1.jpg"
-        alt="Image"
-      />
+      <div
+        style={{ cursor: "pointer", width: "100px" }}
+        onClick={handleImageClick}
+      >
+        <img
+          src="https://media.istockphoto.com/id/1219382595/vector/math-equations-written-on-a-blackboard.jpg?s=612x612&w=0&k=20&c=ShVWsMm2SNCNcIjuWGtpft0kYh5iokCzu0aHPC2fV4A="
+          alt="alternate"
+          width={300}
+        />
+      </div>
     </div>
   );
 }
