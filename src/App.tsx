@@ -17,6 +17,10 @@ function App() {
   const [dbData, setDbData] = useState<any>(null);
   const [name, setName] = useState<any>(null);
   const [phonenumber, setPhonenumber] = useState<string>("");
+  const [image, setImage] = useState("");
+  const imageSrc = image
+    ? image
+    : "https://media.istockphoto.com/id/1219382595/vector/math-equations-written-on-a-blackboard.jpg?s=612x612&w=0&k=20&c=ShVWsMm2SNCNcIjuWGtpft0kYh5iokCzu0aHPC2fV4A=";
 
   const handleEmailChange = (newValue: string) => {
     setEmail(newValue);
@@ -40,26 +44,20 @@ function App() {
     fetchData();
   };
 
-  useEffect(() => {
-    genericDbData();
-  }, []);
-
-  useEffect(() => {
+  const genericGet = (link: string) => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/my-route", {
+        const response = await fetch(`${commandInj}${link}`, {
           method: "GET",
-          body: JSON.stringify({
-            key: "value",
-          }),
           headers: {
             "Content-Type": "application/json",
           },
         });
 
         if (response.ok) {
-          const responseData = await response.json();
-          console.log(responseData);
+          const imageData = await response.blob();
+          const imageUrl = URL.createObjectURL(imageData);
+          setImage(imageUrl);
         } else {
           throw new Error("Request failed");
         }
@@ -69,7 +67,15 @@ function App() {
     };
 
     fetchData();
+  };
+
+  useEffect(() => {
+    genericDbData();
   }, []);
+
+  // useEffect(() => {
+  //   genericGet("/my-route");
+  // }, []);
 
   const handleSubscribe = () => {
     fetch(`${express}/tshirt/2`, {
@@ -167,15 +173,27 @@ function App() {
     }
   };
 
-  const handleImageClick = () => {
+  const getURL = () => {
     const newParams = new URLSearchParams();
     newParams.append("name", "laptop");
     newParams.append("foldername", "images");
     newParams.append("filename", "mypic.jpg");
-    const updatedURL = `${window.location.pathname}?${newParams.toString()}`;
-    window.location.href = `http://localhost:3000/${newParams}`;
-    console.log("updatedURL: ", updatedURL);
+    return `/check-file?${newParams.toString()}`;
   };
+
+  const handleImageClick = () => {
+    const updatedURL = getURL();
+    window.location.href = `http://localhost:3000${updatedURL}`;
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const file = params.get("filename");
+    if (file) {
+      const updatedURL = getURL();
+      genericGet(updatedURL);
+    }
+  }, []);
 
   return (
     <div className="App">
@@ -204,12 +222,11 @@ function App() {
         style={{ cursor: "pointer", width: "100px" }}
         onClick={handleImageClick}
       >
-        <img
-          src="https://media.istockphoto.com/id/1219382595/vector/math-equations-written-on-a-blackboard.jpg?s=612x612&w=0&k=20&c=ShVWsMm2SNCNcIjuWGtpft0kYh5iokCzu0aHPC2fV4A="
-          alt="alternate"
-          width={300}
-        />
+        <img src={imageSrc} alt="alternate" width={300} />
       </div>
+      Weak randomness
+      <button>Log in</button>
+      <button>Register</button>
     </div>
   );
 }
