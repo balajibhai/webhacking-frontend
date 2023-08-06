@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import TextField from "./components/TextField";
+import {
+  BrowserRouter as Router,
+  Link,
+  useNavigate,
+  Routes,
+  Route,
+} from "react-router-dom";
+import Register from "./components/Register";
 
 const xml2js = require("xml2js");
 const parserOptions = {
@@ -16,17 +24,19 @@ function App() {
   const [email, setEmail] = useState("");
   const [dbData, setDbData] = useState<any>(null);
   const [name, setName] = useState<any>(null);
-  const [phonenumber, setPhonenumber] = useState<string>("");
+  const [phonenumber, setPhonenumber] = useState<any>("");
   const [image, setImage] = useState("");
+  const [regClick, setRegClick] = useState(false);
+
   const imageSrc = image
     ? image
     : "https://media.istockphoto.com/id/1219382595/vector/math-equations-written-on-a-blackboard.jpg?s=612x612&w=0&k=20&c=ShVWsMm2SNCNcIjuWGtpft0kYh5iokCzu0aHPC2fV4A=";
 
-  const handleEmailChange = (newValue: string) => {
-    setEmail(newValue);
+  const handleEmailChange = (newValue?: string, name?: string) => {
+    setEmail(newValue || "");
   };
 
-  const handleNameChange = (newValue: string) => {
+  const handleNameChange = (newValue?: string, name?: string) => {
     setName(newValue);
   };
 
@@ -71,6 +81,11 @@ function App() {
 
   useEffect(() => {
     genericDbData();
+
+    const handlePopState = () => {
+      window.location.reload();
+    };
+    window.addEventListener("popstate", handlePopState);
   }, []);
 
   // useEffect(() => {
@@ -195,38 +210,64 @@ function App() {
     }
   }, []);
 
+  const Registration = () => {
+    const history = useNavigate();
+    const handleRegistration = () => {
+      history("/me");
+      setRegClick(true);
+    };
+    return !regClick ? (
+      <button onClick={handleRegistration}>Register</button>
+    ) : null;
+  };
+
   return (
     <div className="App">
-      <div>
-        <div>Enter your email</div>
-        <TextField value={email} onChange={handleEmailChange} />
-        <TextField value={name} onChange={handleNameChange} />
-        <button onClick={handleSubscribe}>Subscribe</button>
-        <button onClick={handleUnsubscribe}>Unsubscribe</button>
-        {postData && <div>You are successfully subscribed!!!</div>}
-        {deleteData && <div>{deleteData.message}</div>}
-        {displayResults(dbData)}
-      </div>
-      <div>Enable two factor authentication</div>
-      <TextField
-        value={name}
-        onChange={(value) => setPhonenumber(value)}
-        placeholder="Enter your phone number"
-      />
-      <button onClick={handleSubmit}>Submit</button>
-      <div>
-        <input type="file" onChange={handleFileChange} />
-        <button onClick={handleFileUpload}>Upload</button>
-      </div>
-      <div
-        style={{ cursor: "pointer", width: "100px" }}
-        onClick={handleImageClick}
-      >
-        <img src={imageSrc} alt="alternate" width={300} />
-      </div>
-      Weak randomness
-      <button>Log in</button>
-      <button>Register</button>
+      {!regClick && (
+        <div>
+          <div>
+            <div>Enter your email</div>
+            <TextField value={email} onChange={handleEmailChange} />
+            <TextField value={name} onChange={handleNameChange} />
+            <button onClick={handleSubscribe}>Subscribe</button>
+            <button onClick={handleUnsubscribe}>Unsubscribe</button>
+            {postData && <div>You are successfully subscribed!!!</div>}
+            {deleteData && <div>{deleteData.message}</div>}
+            {displayResults(dbData)}
+          </div>
+          <div>Enable two factor authentication</div>
+          <TextField
+            value={name}
+            onChange={(value) => setPhonenumber(value)}
+            placeholder="Enter your phone number"
+          />
+          <button onClick={handleSubmit}>Submit</button>
+          <div>
+            <input type="file" onChange={handleFileChange} />
+            <button onClick={handleFileUpload}>Upload</button>
+          </div>
+          <div
+            style={{ cursor: "pointer", width: "100px" }}
+            onClick={handleImageClick}
+          >
+            <img src={imageSrc} alt="alternate" width={300} />
+          </div>
+
+          <div>
+            Weak randomness
+            <button>Log in</button>
+          </div>
+        </div>
+      )}
+      <Router>
+        <nav>
+          <Link to="/me"></Link>
+        </nav>
+        <Routes>
+          <Route path="/me" element={<Register reg={regClick} />} />
+        </Routes>
+        <Registration />
+      </Router>
     </div>
   );
 }

@@ -2,17 +2,21 @@ import React, { ChangeEvent } from "react";
 
 interface TextFieldProps {
   value: string;
-  onChange: (value: string) => void;
+  onChange: (value?: string, name?: string) => void;
   placeholder?: string;
+  name?: string;
 }
 
 const TextField: React.FC<TextFieldProps> = ({
   value,
   onChange,
   placeholder,
+  name,
 }) => {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
+    const { name, value } = event.target;
+    if (name) onChange(value, name);
+    else onChange(value);
   };
 
   return (
@@ -20,6 +24,7 @@ const TextField: React.FC<TextFieldProps> = ({
       <input
         type="text"
         value={value}
+        name={name}
         onChange={handleChange}
         placeholder={placeholder}
       />
