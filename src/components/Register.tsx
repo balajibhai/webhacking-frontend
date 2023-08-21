@@ -11,8 +11,8 @@ const Register = ({ reg }: MeProps) => {
     email: "",
     password: "",
     confirm: "",
+    submit: false,
   });
-  const [submitted, setSubmitted] = useState(false);
 
   const handleRegProcess = (value?: string, name?: string) => {
     if (name) {
@@ -25,12 +25,10 @@ const Register = ({ reg }: MeProps) => {
 
   const handleHashing = async () => {
     try {
-      const newPassword = await bcrypt.hash(regProcess["password"], 10);
-      const confirmPassword = await bcrypt.hash(regProcess["password"], 10);
-      const isMatch = await bcrypt.compare(newPassword, confirmPassword);
+      const isMatch = regProcess["password"] === regProcess["confirm"];
       if (isMatch) {
         console.log("The passwords are same");
-        return newPassword;
+        return regProcess["password"];
       }
       console.log("The passwords do not match");
       return null;
@@ -42,26 +40,31 @@ const Register = ({ reg }: MeProps) => {
 
   const handleSubmit = () => {
     handleHashing();
-    setSubmitted(true);
+    setRegProcess((prevstate) => ({
+      email: "",
+      password: "",
+      confirm: "",
+      ["submit"]: true,
+    }));
   };
 
   if (reg) {
     return (
       <div>
         <TextField
-          value={submitted ? "" : regProcess["email"]}
+          value={regProcess["email"]}
           placeholder="Enter email"
           onChange={handleRegProcess}
           name="email"
         />
         <TextField
-          value={submitted ? "" : regProcess["password"]}
+          value={regProcess["password"]}
           placeholder="Password"
           onChange={handleRegProcess}
           name="password"
         />
         <TextField
-          value={submitted ? "" : regProcess["confirm"]}
+          value={regProcess["confirm"]}
           placeholder="Confirm Password"
           onChange={handleRegProcess}
           name="confirm"
