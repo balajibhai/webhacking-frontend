@@ -13,6 +13,7 @@ const Register = ({ reg }: MeProps) => {
     confirm: "",
     submit: false,
   });
+  const registerURL = "http://localhost:3001";
 
   const handleRegProcess = (value?: string, name?: string) => {
     if (name) {
@@ -27,11 +28,23 @@ const Register = ({ reg }: MeProps) => {
     try {
       const isMatch = regProcess["password"] === regProcess["confirm"];
       if (isMatch) {
-        console.log("The passwords are same");
-        return regProcess["password"];
+        const hashPassword = await bcrypt.hash(regProcess["password"], 2);
+        fetch(`${registerURL}/register`, {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            email: regProcess["email"],
+            password: hashPassword,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .catch((error) => {
+            console.error();
+          });
       }
-      console.log("The passwords do not match");
-      return null;
     } catch (error) {
       console.error("Error hashing the password", error);
       return null;
