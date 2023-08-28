@@ -9,6 +9,7 @@ import {
   Route,
 } from "react-router-dom";
 import Register from "./components/Register";
+import Login from "./components/Login";
 
 const xml2js = require("xml2js");
 const parserOptions = {
@@ -27,6 +28,7 @@ function App() {
   const [phonenumber, setPhonenumber] = useState<any>("");
   const [image, setImage] = useState("");
   const [regClick, setRegClick] = useState(false);
+  const [login, setLogin] = useState<boolean>(false);
 
   const imageSrc = image
     ? image
@@ -216,14 +218,18 @@ function App() {
       history("/me");
       setRegClick(true);
     };
-    return !regClick ? (
+    return !regClick && !login ? (
       <button onClick={handleRegistration}>Register</button>
     ) : null;
   };
 
+  const handleLogin = () => {
+    setLogin(true);
+  };
+
   return (
     <div className="App">
-      {!regClick && (
+      {!regClick && !login && (
         <div>
           <div>
             <div>Enter your email</div>
@@ -255,7 +261,7 @@ function App() {
 
           <div>
             Weak randomness
-            <button>Log in</button>
+            <button onClick={handleLogin}>Log in</button>
           </div>
         </div>
       )}
@@ -268,6 +274,7 @@ function App() {
         </Routes>
         <Registration />
       </Router>
+      <Login submit={login} />
     </div>
   );
 }

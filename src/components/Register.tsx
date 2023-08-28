@@ -1,6 +1,5 @@
 import { useState } from "react";
 import TextField from "./TextField";
-import bcrypt from "bcryptjs";
 
 interface MeProps {
   reg: boolean;
@@ -24,11 +23,10 @@ const Register = ({ reg }: MeProps) => {
     }
   };
 
-  const handleHashing = async () => {
+  const sendToBackend = async () => {
     try {
       const isMatch = regProcess["password"] === regProcess["confirm"];
       if (isMatch) {
-        const hashPassword = await bcrypt.hash(regProcess["password"], 2);
         fetch(`${registerURL}/register`, {
           method: "POST",
           headers: {
@@ -36,7 +34,7 @@ const Register = ({ reg }: MeProps) => {
           },
           body: JSON.stringify({
             email: regProcess["email"],
-            password: hashPassword,
+            password: regProcess["password"],
           }),
         })
           .then((response) => response.json())
@@ -46,13 +44,13 @@ const Register = ({ reg }: MeProps) => {
           });
       }
     } catch (error) {
-      console.error("Error hashing the password", error);
+      console.error("Error sending the password to backend", error);
       return null;
     }
   };
 
   const handleSubmit = () => {
-    handleHashing();
+    sendToBackend();
     setRegProcess((prevstate) => ({
       email: "",
       password: "",
