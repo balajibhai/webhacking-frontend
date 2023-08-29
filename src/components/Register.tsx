@@ -1,17 +1,14 @@
 import { useState } from "react";
 import TextField from "./TextField";
 
-interface MeProps {
-  reg: boolean;
-}
-
-const Register = ({ reg }: MeProps) => {
+const Register = () => {
   const [regProcess, setRegProcess] = useState({
     email: "",
     password: "",
     confirm: "",
     submit: false,
   });
+  const [reg, setReg] = useState(false);
   const registerURL = "http://localhost:3001";
 
   const handleRegProcess = (value?: string, name?: string) => {
@@ -21,6 +18,10 @@ const Register = ({ reg }: MeProps) => {
         [name]: value,
       }));
     }
+  };
+
+  const handleRegistration = () => {
+    setReg(true);
   };
 
   const sendToBackend = async () => {
@@ -51,7 +52,7 @@ const Register = ({ reg }: MeProps) => {
 
   const handleSubmit = () => {
     sendToBackend();
-    setRegProcess((prevstate) => ({
+    setRegProcess(() => ({
       email: "",
       password: "",
       confirm: "",
@@ -84,7 +85,7 @@ const Register = ({ reg }: MeProps) => {
       </div>
     );
   }
-  return null;
+  return <button onClick={handleRegistration}>Register</button>;
 };
 
 export default Register;

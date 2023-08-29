@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import TextField from "./components/TextField";
-import {
-  BrowserRouter as Router,
-  Link,
-  useNavigate,
-  Routes,
-  Route,
-} from "react-router-dom";
-import Register from "./components/Register";
-import Login from "./components/Login";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Weakrandomness from "./links/Weakrandomness";
+import ResetPassword from "./components/ResetPassword";
 
 const xml2js = require("xml2js");
 const parserOptions = {
@@ -27,8 +21,13 @@ function App() {
   const [name, setName] = useState<any>(null);
   const [phonenumber, setPhonenumber] = useState<any>("");
   const [image, setImage] = useState("");
-  const [regClick, setRegClick] = useState(false);
-  const [login, setLogin] = useState<boolean>(false);
+
+  const links = [
+    { text: "SQL Injection", url: "/sql_injection" },
+    { text: "Weakrandomness", url: "/weakrandomness" },
+    { text: "Services", url: "/services" },
+    { text: "Contact", url: "/contact" },
+  ];
 
   const imageSrc = image
     ? image
@@ -160,7 +159,6 @@ function App() {
     return dbData?.map((item: any) => (
       <div key={item.id}>
         <p>{item.email}</p>
-        {/* <p>{item.name}</p> */}
       </div>
     ));
   }
@@ -212,69 +210,53 @@ function App() {
     }
   }, []);
 
-  const Registration = () => {
-    const history = useNavigate();
-    const handleRegistration = () => {
-      history("/me");
-      setRegClick(true);
-    };
-    return !regClick && !login ? (
-      <button onClick={handleRegistration}>Register</button>
-    ) : null;
-  };
-
-  const handleLogin = () => {
-    setLogin(true);
-  };
-
   return (
     <div className="App">
-      {!regClick && !login && (
+      <div>
+        <h1>Navigation Links</h1>
+        <ul>
+          {links.map((link, index) => (
+            <li key={index}>
+              <a href={link.url}>{link.text}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
         <div>
-          <div>
-            <div>Enter your email</div>
-            <TextField value={email} onChange={handleEmailChange} />
-            <TextField value={name} onChange={handleNameChange} />
-            <button onClick={handleSubscribe}>Subscribe</button>
-            <button onClick={handleUnsubscribe}>Unsubscribe</button>
-            {postData && <div>You are successfully subscribed!!!</div>}
-            {deleteData && <div>{deleteData.message}</div>}
-            {displayResults(dbData)}
-          </div>
-          <div>Enable two factor authentication</div>
-          <TextField
-            value={name}
-            onChange={(value) => setPhonenumber(value)}
-            placeholder="Enter your phone number"
-          />
-          <button onClick={handleSubmit}>Submit</button>
-          <div>
-            <input type="file" onChange={handleFileChange} />
-            <button onClick={handleFileUpload}>Upload</button>
-          </div>
-          <div
-            style={{ cursor: "pointer", width: "100px" }}
-            onClick={handleImageClick}
-          >
-            <img src={imageSrc} alt="alternate" width={300} />
-          </div>
-
-          <div>
-            Weak randomness
-            <button onClick={handleLogin}>Log in</button>
-          </div>
+          <div>Enter your email</div>
+          <TextField value={email} onChange={handleEmailChange} />
+          <TextField value={name} onChange={handleNameChange} />
+          <button onClick={handleSubscribe}>Subscribe</button>
+          <button onClick={handleUnsubscribe}>Unsubscribe</button>
+          {postData && <div>You are successfully subscribed!!!</div>}
+          {deleteData && <div>{deleteData.message}</div>}
+          {displayResults(dbData)}
         </div>
-      )}
+        <div>Enable two factor authentication</div>
+        <TextField
+          value={name}
+          onChange={(value) => setPhonenumber(value)}
+          placeholder="Enter your phone number"
+        />
+        <button onClick={handleSubmit}>Submit</button>
+        <div>
+          <input type="file" onChange={handleFileChange} />
+          <button onClick={handleFileUpload}>Upload</button>
+        </div>
+        <div
+          style={{ cursor: "pointer", width: "100px" }}
+          onClick={handleImageClick}
+        >
+          <img src={imageSrc} alt="alternate" width={300} />
+        </div>
+      </div>
       <Router>
-        <nav>
-          <Link to="/me"></Link>
-        </nav>
         <Routes>
-          <Route path="/me" element={<Register reg={regClick} />} />
+          <Route path="/weakrandomness" Component={Weakrandomness} />
+          <Route path="/reset-password" Component={ResetPassword} />
         </Routes>
-        <Registration />
       </Router>
-      <Login submit={login} />
     </div>
   );
 }
