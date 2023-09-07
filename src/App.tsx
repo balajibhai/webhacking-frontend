@@ -6,6 +6,7 @@ import SQLInjection from "./links/SqlInjection";
 import CommandInjection from "./links/CommandInjection";
 import XMLInjection from "./links/XMLInjection";
 import DirectoryTraversal from "./links/DirectoryTraversal";
+import SessionFixation from "./links/SessionFixation";
 
 function App() {
   const links = [
@@ -14,6 +15,7 @@ function App() {
     { text: "XML Injection", url: "/xml_injection" },
     { text: "Directory Traversal", url: "/directory" },
     { text: "Weakrandomness", url: "/weakrandomness" },
+    { text: "Session fixation", url: "/session=J7mPfRwK9sXeD4vZaQ1b" },
   ];
 
   return (
@@ -36,6 +38,10 @@ function App() {
           <Route path="/command_injection" Component={CommandInjection} />
           <Route path="/xml_injection" Component={XMLInjection} />
           <Route path="/directory" Component={DirectoryTraversal} />
+          <Route
+            path="/session=J7mPfRwK9sXeD4vZaQ1b"
+            Component={SessionFixation}
+          />
         </Routes>
       </Router>
     </div>

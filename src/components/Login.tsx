@@ -3,9 +3,10 @@ import TextField from "./TextField";
 
 interface LoginProps {
   submit: boolean;
+  showForgotPassword?: boolean;
 }
 
-const Login = ({ submit }: LoginProps) => {
+const Login = ({ submit, showForgotPassword }: LoginProps) => {
   const [loginProcess, setLoginProcess] = useState({
     mail: "",
     password: "",
@@ -52,11 +53,13 @@ const Login = ({ submit }: LoginProps) => {
               name="password"
             />
             <button onClick={handleSubmit}>Submit</button>
-            <div>
-              <a href="http://localhost:3000/reset-password">
-                Forgot Password?
-              </a>
-            </div>
+            {showForgotPassword && (
+              <div>
+                <a href="http://localhost:3000/reset-password">
+                  Forgot Password?
+                </a>
+              </div>
+            )}
           </div>
         </div>
       )}
